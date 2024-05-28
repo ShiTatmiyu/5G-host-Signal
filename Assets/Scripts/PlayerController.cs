@@ -5,13 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("Reference")]
-    [SerializeField] private Transform cam;
+    [SerializeField] private GameObject cam;
     [SerializeField] private PlayerInput playerInput;
     private CharacterController charCon;
 
     [Header("Setting")]
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float walkSpeed;
     [SerializeField] private float runSpeed;
+    [SerializeField] private float walkFov;
+    [SerializeField] private float runFov;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float gravity = -9.8f;
 
@@ -27,12 +29,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         isGrounded = charCon.isGrounded;
-        Debug.Log(playerInput.GetJumpInput());
-    
+
         Vector2 moveInput = playerInput.GetMoveInput().normalized;
         Vector3 moveDir = new Vector3(moveInput.x, 0, moveInput.y);
-        if (playerInput.GetRunInput()) charCon.Move(transform.TransformDirection(moveDir) * runSpeed * Time.deltaTime);
-        else charCon.Move(transform.TransformDirection(moveDir) * moveSpeed * Time.deltaTime);
+
+        float camFov;
+        if (playerInput.GetRunInput())
+        {
+            charCon.Move(transform.TransformDirection(moveDir) * runSpeed * Time.deltaTime);
+            camFov = runFov;
+        }
+        else
+        {
+            charCon.Move(transform.TransformDirection(moveDir) * walkSpeed * Time.deltaTime);
+            camFov = walkFov;
+        }
+        cam.GetComponent<Camera>().fieldOfView = Mathf.Lerp(cam.GetComponent<Camera>().fieldOfView, camFov, 4 * Time.deltaTime);
+        Debug.Log(cam.GetComponent<Camera>().fieldOfView);
 
         if (isGrounded && playerVelocity.y < 0)
         {

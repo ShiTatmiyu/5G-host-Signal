@@ -17,7 +17,7 @@ public class PlayerInput : MonoBehaviour
     {
         return playerAction.Player.Look.ReadValue<Vector2>();
     }
-    
+
     public Vector2 GetMoveInput()
     {
         return playerAction.Player.Move.ReadValue<Vector2>();
@@ -25,11 +25,19 @@ public class PlayerInput : MonoBehaviour
 
     public bool GetRunInput()
     {
-        return playerAction.Player.Sprint.WasPressedThisFrame();
+        if (playerAction.Player.Sprint.IsPressed())
+        {
+            return true;
+        }
+        else return false;
     }
 
     public bool GetJumpInput()
     {
-        return playerAction.Player.Jump.WasPerformedThisFrame();
+        if (playerAction.Player.Jump.IsPressed())
+        {
+            return true;
+        }
+        else return false;
     }
 }
